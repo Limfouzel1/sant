@@ -1,16 +1,23 @@
 using System;
 using System.IO.Ports;
-using System.Threading;
 
 public class SerialPortManager
 {
     private SerialPort _serialPort;
+    public event EventHandler<string> ConnectionStatusChanged;
 
     public void Connect(string portName, int baudRate = 9600)
     {
-        _serialPort = new SerialPort(portName, baudRate);
-        _serialPort.Open();
-        Console.WriteLine("Connected to " + portName);
+        try
+        {
+            _serialPort = new SerialPort(portName, baudRate);
+            _serialPort.Open();
+            ConnectionStatusChanged?.Invoke(this, $"Подключено к {portName}");
+        }
+        catch (Exception ex)
+        {
+            ConnectionStatusChanged?.Invoke(this, $"Ошибка подключения: {ex.Message}");
+        }
     }
 
     public void Disconnect()
@@ -18,7 +25,7 @@ public class SerialPortManager
         if (_serialPort != null && _serialPort.IsOpen)
         {
             _serialPort.Close();
-            Console.WriteLine("Disconnected.");
+            ConnectionStatusChanged?.Invoke(this, "Отключено");
         }
     }
 
@@ -27,7 +34,6 @@ public class SerialPortManager
         if (_serialPort != null && _serialPort.IsOpen)
         {
             _serialPort.WriteLine(command);
-            Console.WriteLine("Sent: " + command);
         }
     }
 
@@ -35,10 +41,17 @@ public class SerialPortManager
     {
         if (_serialPort != null && _serialPort.IsOpen)
         {
-            string data = _serialPort.ReadLine();
-            Console.WriteLine("Received: " + data);
-            return data;
+            try
+            {
+                return _serialPort.ReadLine();
+            }
+            catch
+            {
+                return null;
+            }
         }
         return null;
     }
+
+    public bool IsConnected => _serialPort?.IsOpen ?? false;
 }
