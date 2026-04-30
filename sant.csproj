@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>AircraftController</AssemblyName>
+    <RootNamespace>Yak130Controller</RootNamespace>
+  </PropertyGroup>
+
+</Project>
