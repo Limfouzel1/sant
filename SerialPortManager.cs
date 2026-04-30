@@ -17,6 +17,7 @@ public class SerialPortManager
         catch (Exception ex)
         {
             ConnectionStatusChanged?.Invoke(this, $"Ошибка подключения: {ex.Message}");
+            throw;
         }
     }
 
